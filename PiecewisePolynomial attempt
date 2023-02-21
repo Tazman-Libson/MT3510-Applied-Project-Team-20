@@ -1,0 +1,34 @@
+def PiecewisePoly(Ndeg, x0, y0, x_j):
+    
+    y_j = f(x_j)                     # finding f(x) for the eval pts
+    MM = Ndeg + 1
+    N_interpolant = len(x0) - Ndeg
+    pts = np.arange(Ndeg+1) + np.arange(N_interpolant).reshape(N_interpolant,1)
+    
+    a = np.zeros((Ndeg+1,N_interpolant))
+    pows = (MM-1-np.arange(MM)).reshape(MM,1)
+    
+    # coefs for every interpolant
+    for i in range(N_interpolant):
+        A = np.vander(x0[pts[i,:]])
+        a[:,i] = np.linalg.solve(A,y0[pts[i,:]])
+    
+    y = np.empty_like(x_j) 
+    
+    pows = Ndeg-np.arange(MM)
+    
+    xnew = np.reshape(x_j,(1,len(x_j)))  
+
+    ynew = np.sum((xnew**pows)*a.reshape(len(x_j),1),axis=0)
+
+    h = x0[1] - x0[0]    
+    k = np.minimum(M-2,((x_j-x0[0])/h).astype(int))
+
+    j = k - Ndeg//2
+
+    j = np.maximum(0,j)
+    j = np.minimum(j,N_interpolant-1)
+
+
+    y = np.sum(a[:,j[:]]*(x_j[:]**pows.reshape(MM,1)),axis = 0)
+    return y
