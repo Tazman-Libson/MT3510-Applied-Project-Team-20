@@ -18,21 +18,20 @@ def PiecewisePoly(Ndeg, x0, y0, x_j):
     
     
     for n in range(len(x_j)):
-        if((x_j[i]<x0).all()):
+        if((x_j[n]<x0).all()):
             k=0
-        elif((x_j[i]>x0).all()):
+        elif((x_j[n]>x0).all()):
             k=len(x0)-1
         else:                # find k for x_i, accounting for the possibility that x_i=x_k
-            k = np.where(((x_j[i]<x0[1:]) & (x_j[i]>=x0[:-1])) | 
-                         ((x0[1:]==x_j[i]) & (x_j[i]>x0[:-1])))[0][0]
+            k = np.where(((x_j[n]<x0[1:]) & (x_j[n]>=x0[:-1])) | 
+                         ((x0[1:]==x_j[n]) & (x_j[n]>x0[:-1])))[0][0]
     
     
         j = k - Ndeg//2    
 
         j = max(0,j)
-        j = min(j,Nint-1)
+        j = min(j,N_interpolant-1)
     
-        y[i] = np.sum(a[:,j]*x[i]**pows)  # obtain new data point
-
-
+        y[n] = np.sum(a[:,j]*x_j[n]**pows)  # obtain new data point
+      
     return y
