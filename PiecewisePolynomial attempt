@@ -14,21 +14,25 @@ def PiecewisePoly(Ndeg, x0, y0, x_j):
         a[:,i] = np.linalg.solve(A,y0[pts[i,:]])
     
     y = np.empty_like(x_j) 
-    
     pows = Ndeg-np.arange(MM)
     
-    xnew = np.reshape(x_j,(1,len(x_j)))  
+    
+    for n in range(len(x_j)):
+        if((x_j[i]<x0).all()):
+            k=0
+        elif((x_j[i]>x0).all()):
+            k=len(x0)-1
+        else:                # find k for x_i, accounting for the possibility that x_i=x_k
+            k = np.where(((x_j[i]<x0[1:]) & (x_j[i]>=x0[:-1])) | 
+                         ((x0[1:]==x_j[i]) & (x_j[i]>x0[:-1])))[0][0]
+    
+    
+        j = k - Ndeg//2    
 
-    ynew = np.sum((xnew**pows)*a.reshape(len(x_j),1),axis=0)
-
-    h = x0[1] - x0[0]    
-    k = np.minimum(M-2,((x_j-x0[0])/h).astype(int))
-
-    j = k - Ndeg//2
-
-    j = np.maximum(0,j)
-    j = np.minimum(j,N_interpolant-1)
+        j = max(0,j)
+        j = min(j,Nint-1)
+    
+        y[i] = np.sum(a[:,j]*x[i]**pows)  # obtain new data point
 
 
-    y = np.sum(a[:,j[:]]*(x_j[:]**pows.reshape(MM,1)),axis = 0)
     return y
